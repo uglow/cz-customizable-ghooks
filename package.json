@@ -1,0 +1,23 @@
+{
+  "name": "cz-customisable-ghook",
+  "version": "1.0.0",
+  "description": "integrate ghook with cz-customizable",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uglow/cz-customizable-ghooks.git"
+  },
+  "keywords": [
+    "cz-customizable",
+    "ghooks"
+  ],
+  "author": "Brett Uglow <u_glow@hotmail.com> (http://uglow.github.io/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/uglow/cz-customizable-ghooks/issues"
+  },
+  "homepage": "https://github.com/uglow/cz-customizable-ghooks#readme"
+}
