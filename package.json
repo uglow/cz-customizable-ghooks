@@ -1,11 +1,8 @@
 {
-  "name": "cz-customisable-ghook",
-  "version": "1.0.0",
-  "description": "integrate ghook with cz-customizable",
+  "name": "cz-customizable-ghooks",
+  "version": "1.0.1",
+  "description": "integrates ghook with cz-customizable",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/uglow/cz-customizable-ghooks.git"
@@ -19,5 +16,14 @@
   "bugs": {
     "url": "https://github.com/uglow/cz-customizable-ghooks/issues"
   },
-  "homepage": "https://github.com/uglow/cz-customizable-ghooks#readme"
+  "homepage": "https://github.com/uglow/cz-customizable-ghooks#readme",
+  "config": {
+    "cz-customizable": {
+      "config": "config/commitMessageConfig.js"
+    }
+  },
+  "dependencies": {
+    "app-root-path": "1.0.0",
+    "chalk": "1.1.3"
+  }
 }
