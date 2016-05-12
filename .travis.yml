@@ -21,7 +21,7 @@ before_install:
 
 install:
   - npm install --quiet
-  - npm link
+  #- npm link
 
 before_script:
 
