@@ -50,17 +50,16 @@ try {
   process.exit(1);
 }
 
-const TYPES = czConfig.types.map(item => item.value);
+// These are mandatory in czConfig, but guard anyway
+const TYPES = (czConfig.types || []).map(item => item.value);
 
 // Feature scopes are optional
-let FEAT_SCOPES = [];
-if (czConfig.scopes && czConfig.scopes.length !== 0) {
-  FEAT_SCOPES = czConfig.scopes.map(item => item.name);
-}
+const FEAT_SCOPES = (czConfig.scopes || []).map(item => item.name);
 
+// Fix-specific scopes are optional too
 let FIX_SCOPES = [];
-if (czConfig.scopeOverrides && czConfig.scopeOverrides.fix && czConfig.scopeOverrides.fix.length !== 0) {
-  FIX_SCOPES = czConfig.scopes.map(item => item.name);
+if (czConfig.scopeOverrides && czConfig.scopeOverrides.fix && czConfig.scopeOverrides.fix.length) {
+  FIX_SCOPES = czConfig.scopeOverrides.fix.map(item => item.name);
 }
 
 function commitError() {

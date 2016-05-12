@@ -16,24 +16,24 @@ module.exports = {
   ],
 
   scopes: [
-    {name: 'accounts'},
-    {name: 'admin'},
-    {name: 'exampleScope'},
-    {name: 'changeMe'}
+    {name: 'a'},
+    {name: 'bb'},
+    {name: 'ccc'},
+    {name: 'dddd'}
   ],
 
   // it needs to match the value for field type. Eg.: 'fix'
-  /*
-   scopeOverrides: {
-   fix: [
+  
+  scopeOverrides: {
+    fix: [
+      {name: 'merge'},
+      {name: 'style'},
+      {name: 'e2eTest'},
+      {name: 'unitTest'}
+    ]
+  },
 
-   {name: 'merge'},
-   {name: 'style'},
-   {name: 'e2eTest'},
-   {name: 'unitTest'}
-   ]
-   },
-   */
+
 
   allowCustomScopes: true,
   allowBreakingChanges: ['feat', 'fix']
