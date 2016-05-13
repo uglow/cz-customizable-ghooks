@@ -5,7 +5,7 @@
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/uglow/cz-customizable-ghooks.git"
+    "url": "https://github.com/uglow/cz-customizable-ghooks.git"
   },
   "keywords": [
     "cz-customizable",
