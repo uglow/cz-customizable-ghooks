@@ -23,7 +23,7 @@ module.exports = {
   ],
 
   // it needs to match the value for field type. Eg.: 'fix'
-  
+
   scopeOverrides: {
     fix: [
       {name: 'merge'},
@@ -32,8 +32,6 @@ module.exports = {
       {name: 'unitTest'}
     ]
   },
-
-
 
   allowCustomScopes: true,
   allowBreakingChanges: ['feat', 'fix']

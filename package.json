@@ -35,6 +35,7 @@
   },
   "devDependencies": {
     "jasmine-node": "1.14.5",
+    "rewire": "2.5.1",
     "semantic-release": "4.3.5"
   }
 }

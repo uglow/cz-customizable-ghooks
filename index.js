@@ -33,6 +33,7 @@ const MAX_LENGTH = 100;
 const PATTERN = /^(?:fixup!\s*)?(\w*)(\(([\w\$\.\-\*/]+)\))*\: (.*)$/;    //type(scope-min-3-chars): min-5-chars-starting-with-lowercase-letter
 const ISSUE_PATTERN = /(ibf-.*?)-/i;
 const IGNORED = /^Merge branch|WIP\:|Release v/;
+const BREAKING_CHANGE_PATTERN = /BREAKING CHANGE:/;
 
 // console.log(pkg);
 // Check config is correct
@@ -50,17 +51,14 @@ try {
   process.exit(1);
 }
 
-// These are mandatory in czConfig, but guard anyway
+
+// Allowed scope and types. These are mandatory, but guard against it anyway
 const TYPES = (czConfig.types || []).map(item => item.value);
+const SCOPES = (czConfig.scopes || []).map(item => item.name);
 
-// Feature scopes are optional
-const FEAT_SCOPES = (czConfig.scopes || []).map(item => item.name);
+let allowCustomScopes = czConfig.allowCustomScopes !== undefined ? !!czConfig.allowCustomScopes : false;  // Convert to boolean. If undefined, do not allow custom scopes.
+let allowBreakingChangesForType = czConfig.allowBreakingChanges || [];  // List of types that can have break
 
-// Fix-specific scopes are optional too
-let FIX_SCOPES = [];
-if (czConfig.scopeOverrides && czConfig.scopeOverrides.fix && czConfig.scopeOverrides.fix.length) {
-  FIX_SCOPES = czConfig.scopeOverrides.fix.map(item => item.name);
-}
 
 function commitError() {
   // gitx does not display it
@@ -70,24 +68,23 @@ function commitError() {
 };
 
 
-
-function validateMessage(message) {
+function validateMessage(firstLine, fullMsg) {
   let isValid = true;
 
-  if (IGNORED.test(message)) {
+  if (IGNORED.test(firstLine)) {
     console.log('Commit message validation ignored.');
     return true;
   }
 
-  if (message.length > MAX_LENGTH) {
-    commitError('is longer than %d characters !', MAX_LENGTH);
+  if (firstLine.length > MAX_LENGTH) {
+    commitError(`is longer than ${MAX_LENGTH} characters !`);
     isValid = false;
   }
 
-  let match = PATTERN.exec(message);
+  let match = PATTERN.exec(firstLine);
 
   if (!match) {
-    commitError('Does not match "<type>(<scope>): <subject-starting-with-lowercase-letter>"! Was: ' + message);
+    commitError(`Does not match "<type>(<scope>): <subject-starting-with-lowercase-letter>"! Was: ${firstLine}`);
     return false;
   }
 
@@ -95,68 +92,76 @@ function validateMessage(message) {
   let scope = match[3];
   let subject = match[4];
 
+  if (!TYPES.length) {
+    commitError(`No valid types defined! Check your package.json and cz-customisable rules file and define the "types" there.`);
+    return false;
+  }
+
+  if (!SCOPES.length && !allowCustomScopes) {
+    commitError(`No valid scopes defined! Check your package.json and cz-customisable rules file and define the "scopes" there (or set allowCustomScopes to true)`);
+    return false;
+  }
+
   if (TYPES.indexOf(type) === -1) {
-    commitError('"%s" is not allowed type!\nValid types: %s', type, TYPES.join(', '));
+    commitError(`"${type}" is not allowed type!\nValid types: ${TYPES.join(', ')}`);
     return false;
   }
 
+  let allowedScopesForType = (czConfig.scopeOverrides && czConfig.scopeOverrides[type] ? czConfig.scopeOverrides[type] : []);
+  allowedScopesForType = allowedScopesForType.map(item => item.name).concat(SCOPES);
 
-  // If this is a feature-commit, only allow certain scope-types
-  if (type !== 'fix' && FEAT_SCOPES.indexOf(scope) === -1) {
-    // if (type === 'feat' && FEAT_SCOPES && FEAT_SCOPES.indexOf(scope) === -1) {
-    commitError('"%s" is not allowed scope for a feature-commit!\nValid feature-scopes: %s', scope, FEAT_SCOPES.join(', '));
-    return false;
-  }
-
-  // If this is a feature-commit, only allow certain scope-types
-  if (type === 'fix' && FEAT_SCOPES.indexOf(scope) === -1 && FIX_SCOPES.indexOf(scope) === -1) {
-    commitError('"%s" is not allowed scope for a fix-commit!\nValid fix-scopes: %s', scope, FEAT_SCOPES.concat(FIX_SCOPES).sort().join(', '));
+  // If this IS a feature-commit, only allow certain scope-types
+  if (!allowCustomScopes && allowedScopesForType.indexOf(scope) === -1) {
+    commitError(`"${scope}" is not allowed scope for a "${type}" commit!\nValid "${type}" scopes: ${allowedScopesForType.sort().join(', ')}`);
     return false;
   }
 
   // Make sure the scope word is lowercase, and more than 4 chars
   if (subject[0] === subject[0].toUpperCase()) {
-    commitError('"%s" must start with a lower-case character (and use imperative language)', subject);
+    commitError(`"${subject}" must start with a lower-case character (and use imperative language)`);
     return false;
   }
 
-  if (subject.split(' ')[0].length < 2) {
-    commitError('"%s" must start with a word that is at-least 3 characters long (and use imperative language)', subject);
+  if (subject.split(' ')[0].length < 3) {
+    commitError(`"${subject}" must start with a word that is at-least 3 characters long (and use imperative language)`);
+    return false;
+  }
+
+  // If there is a BREAKING CHANGE: but it is not allowed for this type, show a message
+  if (BREAKING_CHANGE_PATTERN.test(fullMsg) && allowBreakingChangesForType.indexOf(type) === -1) {
+    commitError(`Breaking changes are not permitted for this type. Valid types: ${allowBreakingChangesForType.join(', ')}`);
     return false;
   }
 
   // Some more ideas, do want anything like this ?
-  // - allow only specific scopes (eg. fix(docs) should not be allowed ?
   // - auto correct the type to lower case ?
   // - auto correct first letter of the subject to lower case ?
   // - auto add empty line after subject ?
   // - auto remove empty () ?
   // - auto correct typos in type ?
-  // - store incorrect messages, so that we can learn
 
   return isValid;
 };
 
 
-function firstLineFromBuffer(buffer) {
-  return buffer.toString().split('\n').shift();
+function getLinesFromBuffer(buffer) {
+  return buffer.toString().split('\n');
 }
 
 
 function getIssueFromBranch(branchName) {
-  var issue = branchName;
-  var result = branchName.match(ISSUE_PATTERN);
+  let issue = branchName;
+  let result = branchName.match(ISSUE_PATTERN);
   if (result && result[1]) {
     issue = (result[1] || '').toUpperCase();
   }
   return issue;
 }
 
-function appendIssueToCommit(buffer, issue) {
-  var result = '';
-  var lines = buffer.toString().split('\n');
-  var lastLine = '';
-  var i = lines.length - 1;
+function appendIssueToCommit(lines, issue) {
+  let result = '';
+  let lastLine = '';
+  let i = lines.length - 1;
 
   // Try to find a non-blank line to see if the last line already contains the issue
   while (lastLine === '' && i >= 0) {
@@ -176,14 +181,13 @@ exports.validateMessage = validateMessage;
 
 // hacky start if not run by jasmine :-D
 if (process.argv.join('').indexOf('jasmine-node') === -1) {
-  var commitMsgFile = process.argv[2];
-  var incorrectLogFile = commitMsgFile.replace('COMMIT_EDITMSG', 'logs/incorrect-commit-msgs');
-
+  let commitMsgFile = process.argv[2];
+  let incorrectLogFile = commitMsgFile.replace('COMMIT_EDITMSG', 'logs/incorrect-commit-msgs');
 
   fs.readFile(commitMsgFile, function(err, buffer) {
-    var msg = firstLineFromBuffer(buffer);
+    let lines = getLinesFromBuffer(buffer);
 
-    if (!validateMessage(msg)) {
+    if (!validateMessage(lines[0], lines.join('\n'))) {
       fs.appendFile(incorrectLogFile, msg + '\n', function() {
         process.exit(1);
       });
@@ -193,7 +197,7 @@ if (process.argv.join('').indexOf('jasmine-node') === -1) {
 
       //If not invalid, add the issue/branch name to the last line
       exec('git rev-parse --abbrev-ref HEAD', function(err, stdout/*, stderr*/) {
-        var lastline = appendIssueToCommit(buffer, getIssueFromBranch(stdout));
+        var lastline = appendIssueToCommit(lines, getIssueFromBranch(stdout));
         fs.appendFile(commitMsgFile, lastline, function() {
           process.exit(0);
         });
