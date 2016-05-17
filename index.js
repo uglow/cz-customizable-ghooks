@@ -186,8 +186,9 @@ if (process.argv.join('').indexOf('jasmine-node') === -1) {
 
   fs.readFile(commitMsgFile, function(err, buffer) {
     let lines = getLinesFromBuffer(buffer);
+    let msg = lines.join('\n');
 
-    if (!validateMessage(lines[0], lines.join('\n'))) {
+    if (!validateMessage(lines[0], msg)) {
       fs.appendFile(incorrectLogFile, msg + '\n', function() {
         process.exit(1);
       });
