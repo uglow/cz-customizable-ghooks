@@ -2,40 +2,75 @@
   "name": "cz-customizable-ghooks",
   "version": "0.0.0-semantically-released",
   "description": "integrate ghooks with cz-customizable configuration",
-  "main": "index.js",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/uglow/cz-customizable-ghooks.git"
-  },
   "keywords": [
     "cz-customizable",
     "ghooks"
   ],
-  "author": "Brett Uglow <u_glow@hotmail.com> (http://uglow.github.io/)",
-  "license": "MIT",
+  "homepage": "https://github.com/uglow/cz-customizable-ghooks#readme",
   "bugs": {
     "url": "https://github.com/uglow/cz-customizable-ghooks/issues"
   },
-  "homepage": "https://github.com/uglow/cz-customizable-ghooks#readme",
+  "license": "MIT",
+  "author": "Brett Uglow <u_glow@hotmail.com> (http://uglow.github.io/)",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/uglow/cz-customizable-ghooks.git"
+  },
   "scripts": {
-    "test": "node_modules/jasmine-node/bin/jasmine-node test/",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
+    "build": "clean:prod",
+    "clean:prod": "rimraf dist/",
+    "coverage": "npm-run-all test:coverage test:check-coverage",
+    "dev": "npm-run-all verify --parallel verify:watch",
+    "release": "npm-run-all build verify test:unit:once",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post",
+    "start": "npm run dev",
+    "test": "npm run test:unit",
+    "test:check-coverage": "istanbul check-coverage reports//coverage.json --config config/testUnit/istanbul.yml",
+    "test:coverage": "npm run test:unit:once",
+    "test:unit": "chokidar 'lib/**/*.js' 'test/**/*.js' -c 'npm run test:unit:once' --initial",
+    "test:unit:once": "istanbul cover --config config/testUnit/istanbul.yml _mocha -- --opts config/testUnit/mocha.opts",
+    "verify": "grunt verify",
+    "verify:watch": "grunt watch:verify"
   },
   "config": {
+    "commitizen": {
+      "path": "node_modules/cz-customizable"
+    },
     "cz-customizable": {
-      "config": "config/fullCommitMessageConfig.js"
+      "config": "config/release/commitMessageConfig.js"
+    },
+    "ghooks": {
+      "commit-msg": "./node_modules/cz-customizable-ghooks/index.js $2"
     }
   },
   "dependencies": {
     "app-root-path": "1.0.0",
     "chalk": "1.1.3"
   },
+  "devDependencies": {
+    "chokidar-cli": "1.2.0",
+    "cz-customizable": "4.0.0",
+    "cz-customizable-ghooks": "1.1.2",
+    "eslint": "1.10.3",
+    "eslint-config-defaults": "8.0.2",
+    "ghooks": "1.2.1",
+    "grunt": "0.4.5",
+    "grunt-cli": "0.1.13",
+    "grunt-contrib-watch": "0.6.1",
+    "grunt-eslint": "17.3.1",
+    "grunt-extend-config": "0.9.3",
+    "grunt-newer": "1.1.1",
+    "istanbul": "0.4.4",
+    "jasmine-node": "1.14.5",
+    "load-grunt-tasks": "3.4.0",
+    "mocha": "2.5.3",
+    "npm-run-all": "2.1.1",
+    "rewire": "2.5.1",
+    "rimraf": "2.5.2",
+    "semantic-release": "4.3.5"
+  },
   "engines": {
     "node": ">=4.x"
-  },
-  "devDependencies": {
-    "jasmine-node": "1.14.5",
-    "rewire": "2.5.1",
-    "semantic-release": "4.3.5"
   }
 }
