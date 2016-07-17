@@ -1,7 +1,9 @@
 sudo: false
 language: node_js
 node_js:
-  - 5.11.0
+  - "4"
+  - "5.11.0"
+  - "6"
 
 # Need to specify a GCC compiler now!
 # https://docs.travis-ci.com/user/languages/javascript-with-nodejs#Node.js-v4-(or-io.js-v3)-compiler-requirements
@@ -21,17 +23,13 @@ before_install:
 
 install:
   - npm install --quiet
-  #- npm link
 
 before_script:
 
 script:
-  - npm test
+  - npm run pre-release
 
 after_success:
-  - 'curl -Lo travis_after_all.py https://git.io/travis_after_all'
-  - python travis_after_all.py
-  - export $(cat .to_export_back) &> /dev/null
   - npm run semantic-release
 
 branches:
