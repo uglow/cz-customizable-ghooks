@@ -9,7 +9,7 @@ describe('cz-customizable-ghooks', () => {
 
   it('should have a validationMessage function', () => {
     module = require('../lib/index');
-  	assert.equal(typeof module.validateMessage, 'function');
+    assert.equal(typeof module.validateMessage, 'function');
   });
 
   describe('validateMessage()', () => {
@@ -75,6 +75,7 @@ describe('cz-customizable-ghooks', () => {
       it('should accept commit messages which match the rules in the config', () => {
         testData.forEach(test => {
           let lines = test.msg.split('\n');
+
           assert.equal(module.validateMessage(lines[0], lines.join('\n')), test.expectedResult, test.msg);
         });
       });
@@ -132,6 +133,7 @@ describe('cz-customizable-ghooks', () => {
       it('should accept commit messages which match the rules in the config', () => {
         testData.forEach(test => {
           let lines = test.msg.split('\n');
+
           assert.equal(module.validateMessage(lines[0], test.msg), test.expectedResult, test.msg);
         });
       });
@@ -165,35 +167,36 @@ describe('cz-customizable-ghooks', () => {
         {
           desc: 'No scopes defined',
           msg: 'foo(y): ',
-          config: {types: [{value: 'x', name:'X'}]},
+          config: {types: [{value: 'x', name: 'X'}]},
           expectedResult: false,
-          expectedMessage: chalk.bold.white.bgRed('INVALID COMMIT MSG') + ': No valid scopes defined! Check your package.json and cz-customisable rules file and define the "scopes" there (or set allowCustomScopes to true)'
+          expectedMessage: chalk.bold.white.bgRed('INVALID COMMIT MSG') + ': No valid scopes defined!' +
+          ' Check your package.json and cz-customisable rules file and define the "scopes" there (or set allowCustomScopes to true)'
         },
         {
           desc: 'Type is not a valid type',
           msg: 'foo(y): ',
-          config: {types: [{value: 'x', name:'X'}], scopes: [{name:'a'}]},
+          config: {types: [{value: 'x', name: 'X'}], scopes: [{name: 'a'}]},
           expectedResult: false,
           expectedMessage: chalk.bold.white.bgRed('INVALID COMMIT MSG') + ': "foo" is not allowed type!\nValid types: x'
         },
         {
           desc: 'Subject must not be blank',
           msg: 'foo(a):    ',
-          config: {types: [{value: 'foo', name:'Foo'}], scopes: [{name:'a'}]},
+          config: {types: [{value: 'foo', name: 'Foo'}], scopes: [{name: 'a'}]},
           expectedResult: false,
           expectedMessage: chalk.bold.white.bgRed('INVALID COMMIT MSG') + ': Subject must be a word that is at least 3 characters long'
         },
         {
           desc: 'Subject must start with a lowercase letter',
           msg: 'foo(a): Bonus',
-          config: {types: [{value: 'foo', name:'Foo'}], scopes: [{name:'a'}]},
+          config: {types: [{value: 'foo', name: 'Foo'}], scopes: [{name: 'a'}]},
           expectedResult: false,
           expectedMessage: chalk.bold.white.bgRed('INVALID COMMIT MSG') + ': "Bonus" must start with a lower-case character (and use imperative language)'
         },
         {
           desc: 'Subject must have at least 3 character',
           msg: 'foo(a): ab       ',
-          config: {types: [{value: 'foo', name:'Foo'}], scopes: [{name:'a'}]},
+          config: {types: [{value: 'foo', name: 'Foo'}], scopes: [{name: 'a'}]},
           expectedResult: false,
           expectedMessage: chalk.bold.white.bgRed('INVALID COMMIT MSG') + ': "ab" must start with a word that is at-least 3 characters long (and use imperative language)'
         }
@@ -215,6 +218,7 @@ describe('cz-customizable-ghooks', () => {
           module.__set__({czConfig: test.config});
 
           let lines = test.msg.split('\n');
+
           assert.equal(module.validateMessage(lines[0], test.msg), test.expectedResult);
           assert.equal(consoleData, test.expectedMessage, test.desc);
           //console.log(consoleData);

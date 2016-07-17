@@ -18,20 +18,23 @@
     "url": "https://github.com/uglow/cz-customizable-ghooks.git"
   },
   "scripts": {
-    "build": "clean:prod",
+    "pre-release": "npm-run-all verify test:coverage build ",
+    "build": "npm run clean:prod",
     "clean:prod": "rimraf dist/",
     "coverage": "npm-run-all test:coverage test:check-coverage",
-    "dev": "npm-run-all verify --parallel verify:watch",
+    "dev": "npm run verify:watch",
     "release": "npm-run-all build verify test:unit:once",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post",
     "start": "npm run dev",
     "test": "npm run test:unit",
-    "test:check-coverage": "istanbul check-coverage reports//coverage.json --config config/testUnit/istanbul.yml",
-    "test:coverage": "npm run test:unit:once",
-    "test:unit": "chokidar 'lib/**/*.js' 'test/**/*.js' -c 'npm run test:unit:once' --initial",
+    "test:check-coverage": "istanbul check-coverage reports/coverage.json --config config/testUnit/istanbul.yml",
+    "test:coverage": "npm-run-all test:unit:once test:check-coverage --silent",
+    "test:unit": "chokidar 'lib/**/*.js' 'test/**/*.js' -c 'npm run test:unit:once' --initial --silent",
     "test:unit:once": "istanbul cover --config config/testUnit/istanbul.yml _mocha -- --opts config/testUnit/mocha.opts",
-    "verify": "grunt verify",
-    "verify:watch": "grunt watch:verify"
+    "verify": "npm run verify:js --silent",
+    "verify:js": "eslint -c config/verify/.eslintrc \"lib/**/*.js\" \"test/**/*.js\" \"config/**/*.js\" && echo ✅ verify:js success",
+    "verify:js:watch": "chokidar 'lib/**/*.js' 'test/**/*.js' 'config/**/*.js' -c 'npm run verify:js' --initial --silent",
+    "verify:watch": "npm run verify:js:watch --silent"
   },
   "config": {
     "commitizen": {
@@ -41,7 +44,8 @@
       "config": "config/release/commitMessageConfig.js"
     },
     "ghooks": {
-      "commit-msg": "./node_modules/cz-customizable-ghooks/index.js $2"
+      "commit-msg": "./node_modules/cz-customizable-ghooks/index.js $2",
+      "pre-push": "npm-run-all verify test:unit:once --silent"
     }
   },
   "dependencies": {
