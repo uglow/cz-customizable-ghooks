@@ -87,7 +87,7 @@ describe('cz-customizable-ghooks', () => {
         types: [
           {value: 'feat', name: 'feat:     A new feature'},
           {value: 'fix', name: 'fix:      A bug fix'},
-          {value: 'docs', name: 'docs:     Documentation only changes'},
+          {value: 'docs', name: 'docs:     Documentation only changes'}
         ],
 
         scopes: [
@@ -117,7 +117,7 @@ describe('cz-customizable-ghooks', () => {
       };
 
       const testData = [
-        {msg: 'feat(customScope): this ok', expectedResult: false},
+        {msg: 'feat(customScope): this not ok', expectedResult: false},
         {msg: 'docs(custom): docs has an override scope', expectedResult: true},
         {msg: 'fix(merge): and so does fix', expectedResult: true},
         {msg: 'docs(invalidCustom): not a valid custom scope', expectedResult: false}
@@ -138,6 +138,66 @@ describe('cz-customizable-ghooks', () => {
         });
       });
     });
+
+
+    describe('with no scopes but with scope overridesForTypes', () => {
+      let baseScopes = [
+        {name: 'merge'},
+        {name: 'style'},
+        {name: 'e2eTest'},
+        {name: 'unitTest'}
+      ];
+      let config = {
+        types: [
+          {value: 'feat', name: 'feat:     A new feature'},
+          {value: 'fix', name: 'fix:      A bug fix'},
+          {value: 'docs', name: 'docs:     Documentation only changes'}
+        ],
+
+        scopeOverrides: {
+          fix: baseScopes,
+          docs: baseScopes.concat({name: 'custom'})
+        },
+        allowCustomScopes: false,
+        allowBreakingChanges: ['feat', 'fix'],
+        process: {
+          exit: () => {}
+        }
+      };
+
+      const testData = [
+        {msg: 'fix(merge): this ok', expectedResult: true},
+        {msg: 'docs(custom): this has an override scope', expectedResult: true},
+        {msg: 'feat(merge): no scopes for feature', expectedResult: false},
+        {msg: 'docs(invalidCustom): not a valid custom scope', expectedResult: false}
+      ];
+
+      let consoleData = '';
+
+      beforeEach(() => {
+        module = rewire('../lib/index');
+        module.__set__({
+          czConfig: config,
+          console: {
+            log: (data) => consoleData += data,
+            error: (data) => consoleData += data
+          }
+        });
+      });
+
+      afterEach(() => {
+        consoleData = '';
+      });
+
+      it('should accept commit messages which match the rules in the config', () => {
+        testData.forEach(test => {
+          let lines = test.msg.split('\n');
+
+          assert.equal(module.validateMessage(lines[0], test.msg), test.expectedResult, test.msg);// + '\n' + consoleData);
+        });
+      });
+    });
+
 
     describe('error conditions', () => {
       let consoleData = '';
@@ -213,7 +273,7 @@ describe('cz-customizable-ghooks', () => {
         });
       });
 
-      it('should accept commit messages which match the rules in the config', () => {
+      it('should reject commit messages which do not match the rules in the config', () => {
         testData.forEach(test => {
           module.__set__({czConfig: test.config});
 
