@@ -367,6 +367,7 @@ describe('cz-customizable-ghooks', () => {
     const commitMsgFileName = __dirname + '/COMMIT_MSG';
     let consoleData = '';
     let exitCode;
+    let execCall = '';
     let revert1, revert2 = () => {};
 
     beforeEach(() => {
@@ -401,6 +402,7 @@ describe('cz-customizable-ghooks', () => {
       revert1();
       revert2();
       deleteCommitMessageFile();
+      execCall = '';
     });
 
     function createCommitMessageFile(msg) {
@@ -453,6 +455,58 @@ describe('cz-customizable-ghooks', () => {
 
       function cb() {
         assert.equal(consoleData, chalk.bold.white.bgGreen('Commit message is valid.'));
+        assert.equal(exitCode, 0);
+        done();
+      }
+
+      module.processCLI(commitMsgFileName, cb);
+    });
+
+
+    it('should try to execute a git command to append the branch name to the message by default', (done) => {
+      createCommitMessageFile('feat(a): something');
+
+      revert2 = module.__set__({
+        exec: (cliArg, cb) => {
+          execCall = cliArg;
+          cb(null, '');   //err, stdOut
+        }
+      });
+
+      function cb() {
+        assert(execCall === 'git rev-parse --abbrev-ref HEAD', execCall + ' should be passed to exec()');
+        assert.equal(exitCode, 0);
+        done();
+      }
+
+      module.processCLI(commitMsgFileName, cb);
+    });
+
+
+    it('should not try to execute a git command to append the branch name if the config file indicates not to', (done) => {
+      createCommitMessageFile('feat(a): something');
+
+      revert2 = module.__set__({
+        exec: (cliArg, cb) => {
+          execCall = cliArg;
+          cb(null, '');   //err, stdOut
+        },
+        czConfig: {
+          types: [
+            {value: 'feat', name: 'feat:     A new feature'}
+          ],
+          scopes: [
+            {name: 'a'}
+          ],
+          scopeOverrides: {},
+          allowCustomScopes: true,
+          allowBreakingChanges: ['feat', 'fix'],
+          appendBranchNameToCommitMessage: false      //<--- This has changed from true (default) to false
+        }
+      });
+
+      function cb() {
+        assert(execCall === '', 'exec() should not be called with ' + execCall);
         assert.equal(exitCode, 0);
         done();
       }
