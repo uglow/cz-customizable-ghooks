@@ -36,7 +36,7 @@ Then configure your package.json:
       "config": "path/to/your/cz-customizable-rules.js"
     },
     "ghooks": {
-      "commit-msg": "./node_modules/cz-customizable-ghooks/index.js $2"
+      "commit-msg": "./node_modules/cz-customizable-ghooks/lib/index.js $2"
     }
   }
 ...
