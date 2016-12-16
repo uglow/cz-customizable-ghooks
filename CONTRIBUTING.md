@@ -13,8 +13,8 @@ Welcome! This document explains how you can contribute to making **cz-customizab
 
 ```
 git clone <this repo>
-npm install -g semantic-release-cli
 npm install -g commitizen
+npm install -g semantic-release-cli
 npm install
 ```
 
@@ -97,7 +97,7 @@ Command | Description
 Command | Description
 :------ | :----------
 <pre>npm test</pre> | Alias for `npm run test:unit` task
-<pre>npm run test:coverage</pre> | Run instrumented unit tests then verify coverage meets defined thresholds<ul><li>Returns non-zero exit code when coverage does not meet thresholds (as defined in istanbul.yml)</li></ul>
+<pre>npm run test:coverage</pre> | Run instrumented unit tests then verify coverage meets defined thresholds<ul><li>Returns non-zero exit code when coverage does not meet thresholds (as defined in istanbul.js)</li></ul>
 <pre>npm run test:unit</pre> | Run unit tests whenever JS source or tests change<ul><li>Uses Mocha</li><li>Code coverage</li><li>Runs continuously (best to run in a separate window)</li></ul>
 <pre>npm run test:unit:once</pre> | Run unit tests once<ul><li>Uses Mocha</li><li>Code coverage</li></ul>
 
@@ -112,6 +112,7 @@ Command | Description
 :------ | :----------
 <pre>npm run verify</pre> | Verify code style and syntax<ul><li>Verifies source *and test code* aginst customisable rules (unlike Webpack loaders)</li></ul>
 <pre>npm run verify:js</pre> | Verify Javascript code style and syntax
+<pre>npm run verify:js:fix</pre> | Verify Javascript code style and syntax and fix any errors that can be fixed automatically
 <pre>npm run verify:js:watch</pre> | Verify Javascript code style and syntax and watch files for changes
 <pre>npm run verify:watch</pre> | Runs verify task whenever JS or CSS code is changed
 
@@ -144,6 +145,7 @@ the `semantic-release` task.
 for each release (which appears in the "Releases" section in GitHub) and
 publishes the package to NPM (when all the tests are successful) with a semantic version number.
 </li></ul>
+<pre>npm run upload-coverage</pre> | Uploads code-coverage metrics to Coveralls.io<ul><li>Setup - https://coveralls.zendesk.com/hc/en-us/articles/201347419-Coveralls-currently-supports</li><li>Define an environment variable called COVERALLS_REPO_TOKEN in your build environment with the repo token from https://coveralls.io/github/<repo-name>/settings</li></ul>
 
 
 
@@ -155,7 +157,7 @@ publishes the package to NPM (when all the tests are successful) with a semantic
 
 There are 3 ways you can change the build-tool configuration for this project:
 
-1. BEST: Modify the Confit configuration file ([confit.json](confit.json)) by hand, then re-run `yo confit` and tell it to use the existing configuration.
+1. BEST: Modify the Confit configuration file ([confit.yml](confit.yml)) by hand, then re-run `yo confit` and tell it to use the existing configuration.
 1. OK: Re-run `yo confit` and provide new answers to the questions. **Confit will attempt to overwrite your existing configuration (it will prompt for confirmation), so make sure you have committed your code to a source control (e.g. git) first**.
   There are certain configuration settings which can **only** be specified by hand, in which case the first approach is still best.
 1. RISKY: Modify the generated build-tool config by hand. Be aware that if you re-run `yo confit` it will attempt to overwrite your changes. So commit your changes to source control first.
@@ -165,7 +167,7 @@ Additionally, the **currently-generated** configuration can be extended in the f
 - The task configuration is defined in [package.json](package.json). It is possible to change the task definitions to add your own sub-tasks.
 You can also use the `pre...` and `post...` script-name prefixes to run commands before (pre) and after (post) the generated commands.
 
-- The `entryPoint.entryPoints` string in [confit.json](confit.json) is designed to be edited manually. It represents the starting-point(s) of the application (like a `main()` function). A NodeJS application has one entry point. E.g. `src/index.js`.
+- The `entryPoint.entryPoints` string in [confit.yml](confit.yml) is designed to be edited manually. It represents the starting-point(s) of the application (like a `main()` function). A NodeJS application has one entry point. E.g. `src/index.js`
 
 
 

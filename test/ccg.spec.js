@@ -13,7 +13,6 @@ describe('cz-customizable-ghooks', () => {
   });
 
   describe('validateMessage()', () => {
-
     describe('with complete config', () => {
       let config = {
         types: [
@@ -26,7 +25,7 @@ describe('cz-customizable-ghooks', () => {
           {name: 'a'},
           {name: 'bb'},
           {name: 'ccc'},
-          {name: 'dddd'}
+          {name: 'dddd'},
         ],
 
         scopeOverrides: {
@@ -34,18 +33,18 @@ describe('cz-customizable-ghooks', () => {
             {name: 'merge'},
             {name: 'style'},
             {name: 'e2eTest'},
-            {name: 'unitTest'}
+            {name: 'unitTest'},
           ],
           docs: [
-            {name: 'custom'}
-          ]
+            {name: 'custom'},
+          ],
         },
         allowCustomScopes: true,
         allowBreakingChanges: ['feat', 'fix'],
         process: {
           exit: () => {
-          }
-        }
+          },
+        },
       };
 
       const testData = [
@@ -56,24 +55,24 @@ describe('cz-customizable-ghooks', () => {
         {msg: 'feat(a): Capitalized subject is bad', expectedResult: false},
         {
           msg: 'fix(a): really long line more than 100 characters is not really permitted because it is just too darn long',
-          expectedResult: false
+          expectedResult: false,
         },
         {msg: 'docs(ccc): breaking change allowed\n\nBREAKING CHANGE: blah', expectedResult: false},
         {msg: 'fix(ccc): breaking change allowed\n\nBREAKING CHANGE: blah', expectedResult: true},
         {msg: 'feat(ccc): breaking change allowed\n\nBREAKING CHANGE: blah', expectedResult: true},
         {msg: 'docs(dddd): but this is ok', expectedResult: true},
-        {msg: 'feat(customScope): this ok', expectedResult: true}
+        {msg: 'feat(customScope): this ok', expectedResult: true},
       ];
 
       beforeEach(() => {
         module = rewire('../lib/index');
         module.__set__({
-          czConfig: config
+          czConfig: config,
         });
       });
 
       it('should accept commit messages which match the rules in the config', () => {
-        testData.forEach(test => {
+        testData.forEach((test) => {
           let lines = test.msg.split('\n');
 
           assert.equal(module.validateMessage(lines[0], lines.join('\n')), test.expectedResult, test.msg);
@@ -87,14 +86,14 @@ describe('cz-customizable-ghooks', () => {
         types: [
           {value: 'feat', name: 'feat:     A new feature'},
           {value: 'fix', name: 'fix:      A bug fix'},
-          {value: 'docs', name: 'docs:     Documentation only changes'}
+          {value: 'docs', name: 'docs:     Documentation only changes'},
         ],
 
         scopes: [
           {name: 'a'},
           {name: 'bb'},
           {name: 'ccc'},
-          {name: 'dddd'}
+          {name: 'dddd'},
         ],
 
         scopeOverrides: {
@@ -102,36 +101,36 @@ describe('cz-customizable-ghooks', () => {
             {name: 'merge'},
             {name: 'style'},
             {name: 'e2eTest'},
-            {name: 'unitTest'}
+            {name: 'unitTest'},
           ],
           docs: [
-            {name: 'custom'}
-          ]
+            {name: 'custom'},
+          ],
         },
         allowCustomScopes: false,
         allowBreakingChanges: ['feat', 'fix'],
         process: {
           exit: () => {
-          }
-        }
+          },
+        },
       };
 
       const testData = [
         {msg: 'feat(customScope): this not ok', expectedResult: false},
         {msg: 'docs(custom): docs has an override scope', expectedResult: true},
         {msg: 'fix(merge): and so does fix', expectedResult: true},
-        {msg: 'docs(invalidCustom): not a valid custom scope', expectedResult: false}
+        {msg: 'docs(invalidCustom): not a valid custom scope', expectedResult: false},
       ];
 
       beforeEach(() => {
         module = rewire('../lib/index');
         module.__set__({
-          czConfig: config
+          czConfig: config,
         });
       });
 
       it('should accept commit messages which match the rules in the config', () => {
-        testData.forEach(test => {
+        testData.forEach((test) => {
           let lines = test.msg.split('\n');
 
           assert.equal(module.validateMessage(lines[0], test.msg), test.expectedResult, test.msg);
@@ -145,31 +144,31 @@ describe('cz-customizable-ghooks', () => {
         {name: 'merge'},
         {name: 'style'},
         {name: 'e2eTest'},
-        {name: 'unitTest'}
+        {name: 'unitTest'},
       ];
       let config = {
         types: [
           {value: 'feat', name: 'feat:     A new feature'},
           {value: 'fix', name: 'fix:      A bug fix'},
-          {value: 'docs', name: 'docs:     Documentation only changes'}
+          {value: 'docs', name: 'docs:     Documentation only changes'},
         ],
 
         scopeOverrides: {
           fix: baseScopes,
-          docs: baseScopes.concat({name: 'custom'})
+          docs: baseScopes.concat({name: 'custom'}),
         },
         allowCustomScopes: false,
         allowBreakingChanges: ['feat', 'fix'],
         process: {
-          exit: () => {}
-        }
+          exit: () => {},
+        },
       };
 
       const testData = [
         {msg: 'fix(merge): this ok', expectedResult: true},
         {msg: 'docs(custom): this has an override scope', expectedResult: true},
         {msg: 'feat(merge): no scopes for feature', expectedResult: false},
-        {msg: 'docs(invalidCustom): not a valid custom scope', expectedResult: false}
+        {msg: 'docs(invalidCustom): not a valid custom scope', expectedResult: false},
       ];
 
       let consoleData = '';
@@ -180,8 +179,8 @@ describe('cz-customizable-ghooks', () => {
           czConfig: config,
           console: {
             log: (data) => consoleData += data,
-            error: (data) => consoleData += data
-          }
+            error: (data) => consoleData += data,
+          },
         });
       });
 
@@ -190,7 +189,7 @@ describe('cz-customizable-ghooks', () => {
       });
 
       it('should accept commit messages which match the rules in the config', () => {
-        testData.forEach(test => {
+        testData.forEach((test) => {
           let lines = test.msg.split('\n');
 
           assert.equal(module.validateMessage(lines[0], test.msg), test.expectedResult, test.msg);// + '\n' + consoleData);
@@ -208,21 +207,21 @@ describe('cz-customizable-ghooks', () => {
           msg: 'foo',
           config: {},
           expectedResult: false,
-          expectedMessage: chalk.bold.white.bgRed('INVALID COMMIT MSG') + ': Does not match "<type>(<scope>): <subject-starting-with-lowercase-letter>"! Was: foo'
+          expectedMessage: chalk.bold.white.bgRed('INVALID COMMIT MSG') + ': Does not match "<type>(<scope>): <subject-starting-with-lowercase-letter>"! Was: foo',
         },
         {
           desc: 'Message matches the IGNORED pattern',
           msg: 'WIP:',
           config: {},
           expectedResult: true,
-          expectedMessage: 'Commit message validation ignored.'
+          expectedMessage: 'Commit message validation ignored.',
         },
         {
           desc: 'No types defined',
           msg: 'foo(y): ',
           config: {},
           expectedResult: false,
-          expectedMessage: chalk.bold.white.bgRed('INVALID COMMIT MSG') + ': No valid types defined! Check your package.json and cz-customisable rules file and define the "types" there.'
+          expectedMessage: chalk.bold.white.bgRed('INVALID COMMIT MSG') + ': No valid types defined! Check your package.json and cz-customisable rules file and define the "types" there.',
         },
         {
           desc: 'No scopes defined',
@@ -230,36 +229,36 @@ describe('cz-customizable-ghooks', () => {
           config: {types: [{value: 'x', name: 'X'}]},
           expectedResult: false,
           expectedMessage: chalk.bold.white.bgRed('INVALID COMMIT MSG') + ': No valid scopes defined!' +
-          ' Check your package.json and cz-customisable rules file and define the "scopes" there (or set allowCustomScopes to true)'
+          ' Check your package.json and cz-customisable rules file and define the "scopes" there (or set allowCustomScopes to true)',
         },
         {
           desc: 'Type is not a valid type',
           msg: 'foo(y): ',
           config: {types: [{value: 'x', name: 'X'}], scopes: [{name: 'a'}]},
           expectedResult: false,
-          expectedMessage: chalk.bold.white.bgRed('INVALID COMMIT MSG') + ': "foo" is not allowed type!\nValid types: x'
+          expectedMessage: chalk.bold.white.bgRed('INVALID COMMIT MSG') + ': "foo" is not allowed type!\nValid types: x',
         },
         {
           desc: 'Subject must not be blank',
           msg: 'foo(a):    ',
           config: {types: [{value: 'foo', name: 'Foo'}], scopes: [{name: 'a'}]},
           expectedResult: false,
-          expectedMessage: chalk.bold.white.bgRed('INVALID COMMIT MSG') + ': Subject must be a word that is at least 3 characters long'
+          expectedMessage: chalk.bold.white.bgRed('INVALID COMMIT MSG') + ': Subject must be a word that is at least 3 characters long',
         },
         {
           desc: 'Subject must start with a lowercase letter',
           msg: 'foo(a): Bonus',
           config: {types: [{value: 'foo', name: 'Foo'}], scopes: [{name: 'a'}]},
           expectedResult: false,
-          expectedMessage: chalk.bold.white.bgRed('INVALID COMMIT MSG') + ': "Bonus" must start with a lower-case character (and use imperative language)'
+          expectedMessage: chalk.bold.white.bgRed('INVALID COMMIT MSG') + ': "Bonus" must start with a lower-case character (and use imperative language)',
         },
         {
           desc: 'Subject must have at least 3 character',
           msg: 'foo(a): ab       ',
           config: {types: [{value: 'foo', name: 'Foo'}], scopes: [{name: 'a'}]},
           expectedResult: false,
-          expectedMessage: chalk.bold.white.bgRed('INVALID COMMIT MSG') + ': "ab" must start with a word that is at-least 3 characters long (and use imperative language)'
-        }
+          expectedMessage: chalk.bold.white.bgRed('INVALID COMMIT MSG') + ': "ab" must start with a word that is at-least 3 characters long (and use imperative language)',
+        },
       ];
 
       beforeEach(() => {
@@ -268,20 +267,20 @@ describe('cz-customizable-ghooks', () => {
         module.__set__({
           console: {
             log: (data) => consoleData = data,
-            error: (data) => consoleData = data
-          }
+            error: (data) => consoleData = data,
+          },
         });
       });
 
       it('should reject commit messages which do not match the rules in the config', () => {
-        testData.forEach(test => {
+        testData.forEach((test) => {
           module.__set__({czConfig: test.config});
 
           let lines = test.msg.split('\n');
 
           assert.equal(module.validateMessage(lines[0], test.msg), test.expectedResult);
           assert.equal(consoleData, test.expectedMessage, test.desc);
-          //console.log(consoleData);
+          // console.log(consoleData);
           consoleData = ''; // reset
         });
       });
@@ -291,7 +290,8 @@ describe('cz-customizable-ghooks', () => {
 
   describe('readConfigFile()', () => {
     let consoleData = '';
-    let revert1, revert2;
+    let revert1;
+    let revert2;
 
     beforeEach(() => {
       module = rewire('../lib/index');
@@ -301,8 +301,8 @@ describe('cz-customizable-ghooks', () => {
         TYPES: ['feat'],
         SCOPES: ['a'],
         process: {
-          exit: () => {}
-        }
+          exit: () => {},
+        },
       });
 
       consoleData = '';
@@ -318,11 +318,11 @@ describe('cz-customizable-ghooks', () => {
       // Destroy the config
       revert2 = module.__set__({
         'PKG.config': {
-          'cz-customizable': { }
+          'cz-customizable': { },
         },
-        console: {
-          error: (data) => consoleData = data
-        }
+        'console': {
+          error: (data) => consoleData = data,
+        },
       });
 
       assert.equal(module.readConfigFile(), false);
@@ -335,12 +335,12 @@ describe('cz-customizable-ghooks', () => {
       revert2 = module.__set__({
         'PKG.config': {
           'cz-customizable': {
-            config: 'foo'
-          }
+            config: 'foo',
+          },
         },
-        console: {
-          error: (data) => consoleData = data
-        }
+        'console': {
+          error: (data) => consoleData = data,
+        },
       });
 
       assert.equal(module.readConfigFile(), false);
@@ -353,9 +353,9 @@ describe('cz-customizable-ghooks', () => {
       revert2 = module.__set__({
         'PKG.config': {
           'cz-customizable': {
-            config: 'test/fixtures/emptyConfig.js'
-          }
-        }
+            config: 'test/fixtures/emptyConfig.js',
+          },
+        },
       });
 
       assert.equal(module.readConfigFile(), true);
@@ -368,7 +368,8 @@ describe('cz-customizable-ghooks', () => {
     let consoleData = '';
     let exitCode;
     let execCall = '';
-    let revert1, revert2 = () => {};
+    let revert1;
+    let revert2 = () => {};
 
     beforeEach(() => {
       module = rewire('../lib/index');
@@ -377,22 +378,22 @@ describe('cz-customizable-ghooks', () => {
       revert1 = module.__set__({
         czConfig: {
           types: [
-            {value: 'feat', name: 'feat:     A new feature'}
+            {value: 'feat', name: 'feat:     A new feature'},
           ],
           scopes: [
-            {name: 'a'}
+            {name: 'a'},
           ],
           scopeOverrides: {},
           allowCustomScopes: true,
-          allowBreakingChanges: ['feat', 'fix']
+          allowBreakingChanges: ['feat', 'fix'],
         },
         console: {
-          //error: (data) => consoleData += data,
-          info: (data) => consoleData += data
+          // error: (data) => consoleData += data,
+          info: (data) => consoleData += data,
         },
         process: {
-          exit: (code) => exitCode = code
-        }
+          exit: (code) => exitCode = code,
+        },
       });
 
       consoleData = '';
@@ -422,7 +423,7 @@ describe('cz-customizable-ghooks', () => {
       revert2 = module.__set__({
         'fs.readFile': (name) => {
           fileNameThatIsRead = name;
-        }
+        },
       });
 
       module.processCLI(commitMsgFileName);
@@ -439,7 +440,7 @@ describe('cz-customizable-ghooks', () => {
         validateMessage: (msg) => {
           msgPassedToValidateMessage = msg;
           return true;
-        }
+        },
       });
 
       function cb() {
@@ -469,8 +470,8 @@ describe('cz-customizable-ghooks', () => {
       revert2 = module.__set__({
         exec: (cliArg, cb) => {
           execCall = cliArg;
-          cb(null, '');   //err, stdOut
-        }
+          cb(null, '');   // err, stdOut
+        },
       });
 
       function cb() {
@@ -489,20 +490,20 @@ describe('cz-customizable-ghooks', () => {
       revert2 = module.__set__({
         exec: (cliArg, cb) => {
           execCall = cliArg;
-          cb(null, '');   //err, stdOut
+          cb(null, '');   // err, stdOut
         },
         czConfig: {
           types: [
-            {value: 'feat', name: 'feat:     A new feature'}
+            {value: 'feat', name: 'feat:     A new feature'},
           ],
           scopes: [
-            {name: 'a'}
+            {name: 'a'},
           ],
           scopeOverrides: {},
           allowCustomScopes: true,
           allowBreakingChanges: ['feat', 'fix'],
-          appendBranchNameToCommitMessage: false      //<--- This has changed from true (default) to false
-        }
+          appendBranchNameToCommitMessage: false,      // <--- This has changed from true (default) to false
+        },
       });
 
       function cb() {

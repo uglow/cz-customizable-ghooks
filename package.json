@@ -12,6 +12,10 @@
   },
   "license": "MIT",
   "author": "Brett Uglow <u_glow@hotmail.com> (http://uglow.github.io/)",
+  "files": [
+    "lib",
+    "*.md"
+  ],
   "main": "lib/index.js",
   "repository": {
     "type": "git",
@@ -19,21 +23,23 @@
   },
   "scripts": {
     "pre-release": "npm-run-all verify test:coverage build ",
-    "build": "npm run clean:prod",
+    "build": "cross-env NODE_ENV=production npm run clean:prod",
     "clean:prod": "rimraf dist/",
     "coverage": "npm-run-all test:coverage test:check-coverage",
-    "dev": "npm run verify:watch",
+    "dev": "cross-env NODE_ENV=development npm run verify:watch",
     "release": "npm-run-all build verify test:unit:once",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post",
     "start": "npm run dev",
     "test": "npm run test:unit",
-    "test:check-coverage": "istanbul check-coverage reports/coverage.json --config config/testUnit/istanbul.yml",
+    "test:check-coverage": "cross-env NODE_ENV=test istanbul check-coverage reports/coverage/coverage.json --config config/testUnit/istanbul.js",
     "test:coverage": "npm-run-all test:unit:once test:check-coverage --silent",
     "test:unit": "chokidar 'lib/**/*.js' 'test/**/*.js' -c 'npm run test:unit:once' --initial --silent",
-    "test:unit:once": "istanbul cover --config config/testUnit/istanbul.yml _mocha -- --opts config/testUnit/mocha.opts",
+    "test:unit:once": "cross-env NODE_ENV=test istanbul cover --config config/testUnit/istanbul.js _mocha -- --opts config/testUnit/mocha.opts",
+    "upload-coverage": "cat reports/coverage/lcov/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "verify": "npm run verify:js --silent",
     "verify:js": "eslint -c config/verify/.eslintrc \"lib/**/*.js\" \"test/**/*.js\" \"config/**/*.js\" && echo ✅ verify:js success",
-    "verify:js:watch": "chokidar 'lib/**/*.js' 'test/**/*.js' 'config/**/*.js' -c 'npm run verify:js' --initial --silent",
+    "verify:js:fix": "eslint --fix -c config/verify/.eslintrc \"lib/**/*.js\" \"test/**/*.js\" \"config/**/*.js\" && echo ✅ verify:js:fix success",
+    "verify:js:watch": "chokidar 'lib/**/*.js' 'test/**/*.js' 'config/**/*.js' -c 'npm run verify:js:fix' --initial --silent",
     "verify:watch": "npm run verify:js:watch --silent"
   },
   "config": {
@@ -45,7 +51,7 @@
     },
     "ghooks": {
       "commit-msg": "./node_modules/cz-customizable-ghooks/lib/index.js $2",
-      "pre-push": "npm-run-all verify test:unit:once --silent"
+      "pre-push": "npm-run-all verify test:coverage --silent"
     }
   },
   "dependencies": {
@@ -54,19 +60,24 @@
   },
   "devDependencies": {
     "chokidar-cli": "1.2.0",
+    "coveralls": "2.11.15",
+    "cross-env": "3.1.3",
     "cz-customizable": "4.0.0",
-    "cz-customizable-ghooks": "1.2.0",
-    "eslint": "1.10.3",
+    "cz-customizable-ghooks": "1.3.0",
+    "eslint": "3.12.2",
     "eslint-config-defaults": "8.0.2",
-    "ghooks": "1.2.1",
+    "eslint-config-google": "0.7.0",
+    "eslint-plugin-node": "2.0.0",
+    "ghooks": "1.3.2",
     "istanbul": "0.4.4",
-    "mocha": "2.5.3",
-    "npm-run-all": "2.1.1",
+    "mocha": "3.2.0",
+    "npm-run-all": "3.1.0",
     "rewire": "2.5.1",
-    "rimraf": "2.5.2",
+    "rimraf": "2.5.4",
     "semantic-release": "4.3.5"
   },
   "engines": {
-    "node": ">=4.x"
+    "node": ">=4.x",
+    "npm": ">=3.9"
   }
 }
