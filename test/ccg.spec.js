@@ -60,6 +60,8 @@ describe('cz-customizable-ghooks', () => {
         {msg: 'docs(ccc): breaking change allowed\n\nBREAKING CHANGE: blah', expectedResult: false},
         {msg: 'fix(ccc): breaking change allowed\n\nBREAKING CHANGE: blah', expectedResult: true},
         {msg: 'feat(ccc): breaking change allowed\n\nBREAKING CHANGE: blah', expectedResult: true},
+        {msg: 'docs: type with no scope is valid', expectedResult: true},
+        {msg: 'fix(): but blank scopes are invalid', expectedResult: false},
         {msg: 'docs(dddd): but this is ok', expectedResult: true},
         {msg: 'feat(customScope): this ok', expectedResult: true},
       ];
@@ -119,6 +121,8 @@ describe('cz-customizable-ghooks', () => {
         {msg: 'feat(customScope): this not ok', expectedResult: false},
         {msg: 'docs(custom): docs has an override scope', expectedResult: true},
         {msg: 'fix(merge): and so does fix', expectedResult: true},
+        {msg: 'fix: and so does fix with no scope', expectedResult: true},
+        {msg: 'fix(): but blank scopes are invalid', expectedResult: false},
         {msg: 'docs(invalidCustom): not a valid custom scope', expectedResult: false},
       ];
 
@@ -152,7 +156,6 @@ describe('cz-customizable-ghooks', () => {
           {value: 'fix', name: 'fix:      A bug fix'},
           {value: 'docs', name: 'docs:     Documentation only changes'},
         ],
-
         scopeOverrides: {
           fix: baseScopes,
           docs: baseScopes.concat({name: 'custom'}),
@@ -169,6 +172,8 @@ describe('cz-customizable-ghooks', () => {
         {msg: 'docs(custom): this has an override scope', expectedResult: true},
         {msg: 'feat(merge): no scopes for feature', expectedResult: false},
         {msg: 'docs(invalidCustom): not a valid custom scope', expectedResult: false},
+        {msg: 'docs(): but blank scopes are invalid', expectedResult: false},
+        {msg: 'docs: the scope is in fact optional', expectedResult: true},
       ];
 
       let consoleData = '';
@@ -445,6 +450,30 @@ describe('cz-customizable-ghooks', () => {
 
       function cb() {
         assert.equal(msgPassedToValidateMessage, 'foo');
+        done();
+      }
+      module.processCLI(commitMsgFileName, cb);
+    });
+
+
+    it('should try to append to the incorrect-log-file when the commit message is invalid()', (done) => {
+      createCommitMessageFile('foo');
+
+      let fileNameThatIsAppended;
+      let fileDataThatIsAppended;
+
+      revert2 = module.__set__({
+        'validateMessage': () => false,
+        'fs.appendFile': (name, data, callback) => {
+          fileNameThatIsAppended = name;
+          fileDataThatIsAppended = data;
+          callback();
+        },
+      });
+
+      function cb() {
+        assert(fileNameThatIsAppended.indexOf('test/COMMIT_MSG') !== -1);
+        assert.equal(fileDataThatIsAppended, 'foo\n');
         done();
       }
       module.processCLI(commitMsgFileName, cb);
