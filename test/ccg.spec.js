@@ -452,6 +452,7 @@ describe('cz-customizable-ghooks', () => {
         assert.equal(msgPassedToValidateMessage, 'foo');
         done();
       }
+
       module.processCLI(commitMsgFileName, cb);
     });
 
@@ -476,6 +477,7 @@ describe('cz-customizable-ghooks', () => {
         assert.equal(fileDataThatIsAppended, 'foo\n');
         done();
       }
+
       module.processCLI(commitMsgFileName, cb);
     });
 
@@ -542,6 +544,17 @@ describe('cz-customizable-ghooks', () => {
       }
 
       module.processCLI(commitMsgFileName, cb);
+    });
+  });
+
+  describe('processCLI()', () => {
+    it('should throw an exception if the commitMsgFileName is not a string', () => {
+      let module = require('../lib/index');
+      let expectedError = /Error\: commitMsgFileName must be the path to the "COMMIT_EDITMSG" file \(usually ".git\/COMMIT_EDITMSG"\)/;
+
+      assert.throws(() => module.processCLI(undefined), expectedError);
+      assert.throws(() => module.processCLI(null), expectedError);
+      assert.throws(() => module.processCLI(''), expectedError);
     });
   });
 });
