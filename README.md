@@ -33,20 +33,20 @@ Make sure you have a git repository (`git init`) BEFORE installing ghooks, other
 This package is designed to be used in conjunction with `commitizen`, `cz-customizable` and either `ghooks` or `husky`.
 
 
-1. Install pre-requisites (if not already installed)
-```
-npm i commitizen -g
-npm i cz-customizable cz-customizable-ghooks
-```
-
+1. Install pre-requisites (if not already installed):
+  ```
+  npm i commitizen -g
+  npm i cz-customizable cz-customizable-ghooks
+  ```
+  
 2. Configure cz-customizable in `package.json`:
-```
+  ```
   "config": {
     "cz-customizable": {
       "config": "path/to/your/cz-customizable-rules.js"
     }
   }
-```
+  ```
 
 
 3. Install ONE of these git hook packages:
@@ -55,20 +55,20 @@ npm i cz-customizable cz-customizable-ghooks
 <summary>ghooks</summary>
 
 1. Install ghooks:
-```
-npm i ghooks
-```
+  ```
+  npm i ghooks
+  ```
+  
 2. Configure `package.json`:
-```
+  ```
   "config": {
-    "cz-customizable": {
-      "config": "path/to/your/cz-customizable-rules.js"
-    },
+    ...
     "ghooks": {
       "commit-msg": "cz-customizable-ghooks $2"
     }
   }
-```
+  ```
+  
 </details>
   
 
@@ -77,7 +77,7 @@ npm i ghooks
 
 1. Install husky:
 ```
-npm i ghooks
+npm i husky
 ```
 2. Configure `package.json`:
 ```
