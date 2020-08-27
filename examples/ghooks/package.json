@@ -1,0 +1,28 @@
+{
+  "name": "ghooks-example",
+  "version": "1.0.0",
+  "description": "Example of using cz-customizable-ghooks with ghooks",
+  "license": "UNLICENSED",
+  "config": {
+    "commitizen": {
+      "path": "node_modules/cz-customizable"
+    },
+    "cz-customizable": {
+      "config": "commitMessageConfig.js"
+    },
+    "ghooks": {
+      "commit-msg": "LOGGING_LEVEL=debug cz-customizable-ghooks $2"
+    }
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "cz-customizable": "6.3.0",
+    "cz-customizable-ghooks": "*",
+    "ghooks": "2.0.4"
+  },
+  "engines": {
+    "node": ">=10.x",
+    "npm": ">=6"
+  },
+  "private": true
+}

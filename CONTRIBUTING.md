@@ -1,12 +1,7 @@
-<!--[CN_HEADING]-->
 # Contributing
 
 Welcome! This document explains how you can contribute to making **cz-customizable-ghooks** even better.
 
-
-<!--[]-->
-
-<!--[CN_GETTING_STARTED]-->
 # Getting Started
 
 ## Installation
@@ -19,9 +14,6 @@ npm install
 ```
 
 
-<!--[]-->
-
-<!--[CN_GITFLOW_PROCESS]-->
 # GitFlow Development Process
 
 This project uses the [GitHub Flow](https://guides.github.com/introduction/flow/index.html) workflow.
@@ -76,9 +68,6 @@ Once merged, Pull Requests preserve a record of the historical changes to your c
 By incorporating certain keywords into the text of your Pull Request, you can associate issues with code. When your Pull Request is merged, the related issues are also closed. For example, entering the phrase Closes #32 would close issue number 32 in the repository. For more information, check out our help article.
 
 
-<!--[]-->
-
-<!--[CN_BUILD_TASKS]-->
 ## Build Tasks
 
 Command | Description
@@ -128,7 +117,7 @@ Command | Description
 <pre>git status</pre> | Lists the current branch and the status of changed files
 <pre>git log</pre> | Displays the commit log (press Q to quit viewing)
 <pre>git add .</pre> | Stages all modified & untracked files, ready to be committed
-<pre>git cz</pre> | Commit changes to local repository using Commitizen<ul><li>Asks questions about the change to generate a valid conventional commit message</li><li>Can be customised by modifying [config/release/commitMessageConfig.js](config/release/commitMessageConfig.js)</li></ul>
+<pre>git cz</pre> | Commit changes to local repository using Commitizen<ul><li>Asks questions about the change to generate a valid conventional commit message</li><li>Can be customised by modifying [config/release/commitMessageConfig.js](config/commitMessageConfig.js)</li></ul>
 <pre>git push</pre> | Push local repository changes to remote repository
 
 
@@ -145,29 +134,5 @@ Command | Description
 
 
 <!--[]-->
-
-
-<!--[CN_CHANGING_BUILD_TOOL_CONFIG]-->
-## Changing build-tool configuration
-
-There are 3 ways you can change the build-tool configuration for this project:
-
-1. BEST: Modify the Confit configuration file ([confit.yml](confit.yml)) by hand, then re-run `yo confit` and tell it to use the existing configuration.
-1. OK: Re-run `yo confit` and provide new answers to the questions. **Confit will attempt to overwrite your existing configuration (it will prompt for confirmation), so make sure you have committed your code to a source control (e.g. git) first**.
-  There are certain configuration settings which can **only** be specified by hand, in which case the first approach is still best.
-1. RISKY: Modify the generated build-tool config by hand. Be aware that if you re-run `yo confit` it will attempt to overwrite your changes. So commit your changes to source control first.
-
-Additionally, the **currently-generated** configuration can be extended in the following ways:
-
-- The task configuration is defined in [package.json](package.json). It is possible to change the task definitions to add your own sub-tasks.
-You can also use the `pre...` and `post...` script-name prefixes to run commands before (pre) and after (post) the generated commands.
-
-- The `entryPoint.entryPoints` string in [confit.yml](confit.yml) is designed to be edited manually. It represents the starting-point(s) of the application (like a `main()` function). A NodeJS application has one entry point. E.g. `src/index.js`
-
-
-
-
-<!--[]-->
-
 
 

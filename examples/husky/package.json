@@ -1,0 +1,30 @@
+{
+  "name": "husky-example",
+  "version": "1.0.0",
+  "description": "Example of using cz-customizable-ghooks with husky",
+  "license": "UNLICENSED",
+  "husky": {
+     "hooks": {
+       "commit-msg": "LOGGING_LEVEL=debug cz-customizable-ghooks"
+     }
+  },
+  "config": {
+    "commitizen": {
+      "path": "node_modules/cz-customizable"
+    },
+    "cz-customizable": {
+      "config": "commitMessageConfig.js"
+    }
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "cz-customizable": "6.3.0",
+    "cz-customizable-ghooks": "*",
+    "husky": "4.2.5"
+  },
+  "engines": {
+    "node": ">=10.x",
+    "npm": ">=6"
+  },
+  "private": true
+}

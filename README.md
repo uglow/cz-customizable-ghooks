@@ -16,7 +16,7 @@ Integrate [cz-customizable](https://github.com/leonardoanalista/cz-customizable)
 ## Purpose
 
 This package validates that a git commit message matches the rules defined in your `cz-customizable` config file (see [cz-customizable](https://github.com/leonardoanalista/cz-customizable)).
-[Example commit message rules](test/fixtures/fullCommitMessageConfig.js).
+[Example commit message rules](fixtures/fullCommitMessageConfig.js).
 
 ## Prerequisites
 
@@ -62,13 +62,13 @@ This package is designed to be used in conjunction with `commitizen`, `cz-custom
 2. Configure `package.json`:
   ```
   "config": {
-    ...
     "ghooks": {
       "commit-msg": "cz-customizable-ghooks $2"
     }
   }
   ```
   
+_An example of this setup is in `examples/ghooks`._
 </details>
   
 
@@ -81,10 +81,14 @@ npm i husky
 ```
 2. Configure `package.json`:
 ```
-  "scripts": {
-    "commitmsg": "cz-customizable-ghooks"
+  "husky": {
+    "hooks": {
+      "commitmsg": "cz-customizable-ghooks"
+    }
   }
 ```
+
+_An example of this setup is in `examples/husky`._
 </details>
 
 
@@ -92,3 +96,19 @@ npm i husky
 
 Commit your changes to git as normal. If the commit message entered is invalid, the commit will be rejected with an error message (according to the rules specified in your cz-customizable config).
 Works with git command-line and visual Git tools (such as SourceTree).
+
+## Additional config
+
+### `appendIssueFromBranchName`
+
+If this config value is set to true, the git branch name is queried, and an attempt is made to
+parse the branch name, looking for the `ticketNumberPrefix` and `ticketNumberRegExp` values. If found,
+they are appended to the commit message. If the branch name does not match the `ticketNumberPrefix`
+and `ticketNumberRegExp` expression, or if `ticketNumberPrefix` and `ticketNumberRegExp` are not provided,
+the full branch name is appended to the commit message. 
+
+This property was previously called `appendBranchNameToCommitMessage`.
+
+## Debugging
+
+You can turn on debug logging by specifying `LOGGING_LEVEL=debug` before the `cz-customizable-ghooks` command.

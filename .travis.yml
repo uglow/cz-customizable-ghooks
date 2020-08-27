@@ -1,34 +1,17 @@
 sudo: false
 language: node_js
+
 node_js:
-  - "4"
-  - "6"
-  - "7"
-
-# Need to specify a GCC compiler now!
-# https://docs.travis-ci.com/user/languages/javascript-with-nodejs#Node.js-v4-(or-io.js-v3)-compiler-requirements
-env:
-  - CXX=g++-4.8
-
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-    packages:
-      - g++-4.8
-
-before_install:
-  - if [[ `npm -v` != 3* ]]; then npm i -g npm@3.9.5; fi
-  - npm prune
-  - npm set progress=false
+  - '10'
 
 install:
-  - npm install --quiet
+  - npm install
 
 before_script:
 
 script:
-  - npm run pre-release
+  - npm run verify
+  - npm run test
 
 after_success:
   - npm run upload-coverage
@@ -42,4 +25,3 @@ notifications:
   email:
     recipients:
       - u_glow@hotmail.com
-
