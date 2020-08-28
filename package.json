@@ -1,6 +1,6 @@
 {
   "name": "cz-customizable-ghooks",
-  "version": "0.0.0-semantically-released",
+  "version": "0.0.0-development",
   "description": "Integrate [cz-customizable](https://github.com/leoforfree/cz-customizable) config with [ghooks](https://github.com/gtramontina/ghooks) or [husky](https://github.com/typicode/husky) to use a single configuration for commit message generation AND commit message validation.",
   "keywords": [
     "cz-customizable",
