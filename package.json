@@ -31,7 +31,7 @@
     "coverage": "npm-run-all test:coverage test:check-coverage",
     "lint": "npm-run-all 'verify -- --fix'",
     "release": "npm-run-all build verify test:unit:once",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post",
+    "semantic-release": "semantic-release",
     "start": "npm run dev",
     "test": "npm run test:unit",
     "test:unit": "jest --silent --coverage",
