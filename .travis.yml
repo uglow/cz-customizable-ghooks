@@ -1,4 +1,3 @@
-sudo: false
 language: node_js
 
 node_js:
@@ -6,6 +5,7 @@ node_js:
 
 install:
   - npm install
+  - npm uninstall ghooks
 
 before_script:
 
