@@ -83,7 +83,7 @@ npm i husky
 ```
   "husky": {
     "hooks": {
-      "commitmsg": "cz-customizable-ghooks"
+      "commit-msg": "cz-customizable-ghooks"
     }
   }
 ```
