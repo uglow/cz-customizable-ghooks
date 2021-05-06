@@ -75,17 +75,39 @@ _An example of this setup is in `examples/ghooks`._
 <details>
 <summary>husky</summary>
 
-1. Install husky:
+Install husky:
 ```
 npm i husky
 ```
-2. Configure `package.json`:
+
+**If you use husky v4 or under:**
+
+Configure the hooks in the `package.json`:  
 ```
-  "husky": {
-    "hooks": {
-      "commit-msg": "cz-customizable-ghooks"
-    }
+"husky": {
+  "hooks": {
+    "commit-msg": "cz-customizable-ghooks"
   }
+}
+```
+
+**If you use husky v5 or higher:**
+
+Inside the *.husky* folder, create a new script:  
+`husky add .husky/commit-msg "npm run commit-msg -- \"$1\""`.
+
+Then create create the `commit-msg` script in the `package.json`:  
+```
+"scripts": {
+  "commit-msg": "cz-customizable-ghooks"
+}
+```
+
+If you wish to specify the `LOGGING_LEVEL` flag, you can use [cross-env](https://www.npmjs.com/package/cross-env):  
+```
+"scripts": {
+  "commit-msg": "cross-env LOGGING_LEVEL=debug cz-customizable-ghooks"
+}
 ```
 
 _An example of this setup is in `examples/husky`._
