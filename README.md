@@ -96,7 +96,7 @@ Configure the hooks in the `package.json`:
 Inside the *.husky* folder, create a new script:  
 `husky add .husky/commit-msg "npm run commit-msg -- \"$1\""`.
 
-Then create create the `commit-msg` script in the `package.json`:  
+Then create the `commit-msg` script in the `package.json`:  
 ```
 "scripts": {
   "commit-msg": "cz-customizable-ghooks"
